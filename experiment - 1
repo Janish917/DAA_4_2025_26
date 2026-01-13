@@ -1,0 +1,76 @@
+import java.util.*;
+
+public class ComplexRecursion {
+
+    static long operations = 0;
+    static int maxDepth = 0;
+
+    static void complexRec(int n, int depth) {
+
+        maxDepth = Math.max(maxDepth, depth);
+        operations++;
+
+        if (n <= 2) {
+            return;
+        }
+
+        int p = n;
+        while (p > 0) {
+            operations++;
+            int[] temp = new int[n];
+            for (int i = 0; i < n; i++) {
+                temp[i] = i ^ p;
+                operations++;
+            }
+            p >>= 1;
+        }
+
+        int[] small = new int[n];
+        for (int i = 0; i < n; i++) {
+            small[i] = i * i;
+            operations++;
+        }
+
+        reverseArray(small);
+
+        complexRec(n / 2, depth + 1);
+        complexRec(n / 2, depth + 1);
+        complexRec(n / 2, depth + 1);
+    }
+
+    static void reverseArray(int[] arr) {
+        int l = 0, r = arr.length - 1;
+        while (l < r) {
+            int temp = arr[l];
+            arr[l] = arr[r];
+            arr[r] = temp;
+            l++;
+            r--;
+            operations++;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] inputs = {8, 16, 32, 64};
+
+        for (int n : inputs) {
+            operations = 0;
+            maxDepth = 0;
+
+            long start = System.currentTimeMillis();
+            complexRec(n, 1);
+            long end = System.currentTimeMillis();
+
+            System.out.println("n = " + n);
+            System.out.println("Operations = " + operations);
+            System.out.println("Recursion Depth = " + maxDepth);
+            System.out.println("Time Taken (ms) = " + (end - start));
+            System.out.println(" ");
+        }
+    }
+}
+
+// Recurrence relation(form the given source code): 3T(n/2) + n(log(n))
+// T(n) = n^(log3 to the base 2) 
+// First case of master's theorem
